@@ -7,6 +7,8 @@ import '../widgets/assistant_header.dart';
 import 'add_task_screen.dart';
 import 'insights_screen.dart';
 import 'settings_screen.dart';
+import 'calendar_screen.dart';
+import 'pomodoro_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -20,11 +22,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // We can pre-fetch data if needed, but the provider does it on init.
-    // final allTasks = ref.watch(taskListProvider);
-
     final tabs = [
        const _TaskTabs(),
+       const CalendarScreen(),
+       const PomodoroScreen(),
        const InsightsScreen(),
     ];
 
@@ -41,6 +42,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           NavigationDestination(
             icon: Icon(Icons.check_circle_outline),
             label: 'Tasks',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.calendar_month),
+            label: 'Calendar',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.timer),
+            label: 'Focus',
           ),
           NavigationDestination(
             icon: Icon(Icons.show_chart),

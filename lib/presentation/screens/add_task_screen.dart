@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 import '../../data/models/task_model.dart';
 import '../../features/tasks/task_providers.dart';
+import '../../features/categories/category_providers.dart';
 
 class AddTaskScreen extends ConsumerStatefulWidget {
   const AddTaskScreen({super.key});
@@ -15,17 +17,21 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _subtaskController = TextEditingController();
   
   DateTime _selectedDate = DateTime.now();
   TimeOfDay? _selectedTime;
   bool _hasReminder = false;
   String _priority = 'Medium';
+  String? _selectedCategoryId;
   final List<String> _priorities = ['Low', 'Medium', 'High'];
+  final List<String> _subtasks = []; // List to store subtask titles
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _subtaskController.dispose();
     super.dispose();
   }
 
@@ -57,6 +63,9 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
 
   void _saveTask() {
     if (_formKey.currentState!.validate()) {
+      // Generate IDs for subtasks
+      final subtaskIds = _subtasks.map((title) => const Uuid().v4()).toList();
+      
       final newTask = Task(
         title: _titleController.text,
         description: _descriptionController.text.isEmpty ? null : _descriptionController.text,
@@ -66,6 +75,8 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
             : null,
         priority: _priority,
         hasReminder: _hasReminder,
+        categoryId: _selectedCategoryId,
+        subtaskIds: subtaskIds,
       );
 
       ref.read(taskListProvider.notifier).addTask(newTask);
@@ -172,6 +183,118 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
                   });
                 },
               ),
+              const SizedBox(height: 16),
+              Consumer(
+                builder: (context, ref, child) {
+                  final categories = ref.watch(categoryListProvider);
+                  return DropdownButtonFormField<String>(
+                    value: _selectedCategoryId,
+                    decoration: const InputDecoration(
+                      labelText: 'Category (Optional)',
+                      prefixIcon: Icon(Icons.category),
+                    ),
+                    items: [
+                      const DropdownMenuItem<String>(
+                        value: null,
+                        child: Text('No Category'),
+                      ),
+                      ...categories.map((category) {
+                        return DropdownMenuItem<String>(
+                          value: category.id,
+                          child: Row(
+                            children: [
+                              Text(category.icon),
+                              const SizedBox(width: 8),
+                              Text(category.name),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedCategoryId = newValue;
+                      });
+                    },
+                  );
+                },
+              ),
+              const SizedBox(height: 24),
+              
+              // Subtasks Section
+              const Text(
+                'Subtasks (Optional)',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _subtaskController,
+                      decoration: const InputDecoration(
+                        hintText: 'Add a subtask',
+                        prefixIcon: Icon(Icons.checklist),
+                      ),
+                      onSubmitted: (value) {
+                        if (value.trim().isNotEmpty) {
+                          setState(() {
+                            _subtasks.add(value.trim());
+                            _subtaskController.clear();
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.add_circle),
+                    color: Theme.of(context).primaryColor,
+                    onPressed: () {
+                      if (_subtaskController.text.trim().isNotEmpty) {
+                        setState(() {
+                          _subtasks.add(_subtaskController.text.trim());
+                          _subtaskController.clear();
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              if (_subtasks.isNotEmpty) ...[
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _subtasks.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        dense: true,
+                        leading: const Icon(Icons.subdirectory_arrow_right, size: 16),
+                        title: Text(_subtasks[index]),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.close, size: 18),
+                          onPressed: () {
+                            setState(() {
+                              _subtasks.removeAt(index);
+                            });
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${_subtasks.length} subtask${_subtasks.length != 1 ? 's' : ''} added',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _saveTask,

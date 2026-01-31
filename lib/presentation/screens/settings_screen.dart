@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../features/settings/settings_providers.dart';
+import '../../features/theme/theme_provider.dart';
+import 'categories_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -35,6 +37,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final settings = ref.watch(appSettingsProvider);
     final settingsNotifier = ref.read(appSettingsProvider.notifier);
+    final themeMode = ref.watch(themeModeProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -152,6 +155,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 },
               ),
               leading: const Icon(Icons.notifications_active),
+            ),
+          ),
+          const SizedBox(height: 32),
+
+          // General Section
+          Text(
+            'General',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.category),
+              title: const Text('Manage Categories'),
+              subtitle: const Text('Add, edit, or delete task categories'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CategoriesScreen(),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          Card(
+            child: SwitchListTile(
+              secondary: Icon(
+                themeMode == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode,
+              ),
+              title: const Text('Dark Mode'),
+              subtitle: Text(
+                themeMode == ThemeMode.dark ? 'Dark theme enabled' : 'Light theme enabled',
+              ),
+              value: themeMode == ThemeMode.dark,
+              onChanged: (bool value) {
+                ref.read(themeModeProvider.notifier).toggleTheme();
+              },
             ),
           ),
           const SizedBox(height: 32),

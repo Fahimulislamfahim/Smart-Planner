@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'core/themes/app_theme.dart';
+import 'data/local/hive_service.dart';
+import 'presentation/screens/home_screen.dart';
+import 'data/repositories/app_settings_repository.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/reminder_scheduler_service.dart';
-import 'data/local/hive_service.dart';
-import 'data/repositories/app_settings_repository.dart';
-import 'presentation/screens/home_screen.dart';
+import 'features/theme/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,17 +29,38 @@ void main() async {
   );
 }
 
-class SmartPlannerApp extends StatelessWidget {
+class SmartPlannerApp extends ConsumerWidget {
   const SmartPlannerApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+
     return MaterialApp(
       title: 'Smart Planner',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme, // Optional: Implement dark theme
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
+      
+      // Light Theme
+      theme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.light,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.light,
+        ),
+      ),
+      
+      // Dark Theme
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
+      ),
+      
       home: const HomeScreen(),
     );
   }

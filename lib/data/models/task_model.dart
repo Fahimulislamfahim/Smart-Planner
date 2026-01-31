@@ -39,6 +39,12 @@ class Task extends HiveObject {
   @HiveField(10)
   int? reminderOffsetMinutes; // Minutes before task time, null = use default
 
+  @HiveField(11)
+  String? categoryId; // Link to Category
+
+  @HiveField(12)
+  List<String> subtaskIds; // List of subtask IDs
+
   Task({
     String? id,
     required this.title,
@@ -51,7 +57,10 @@ class Task extends HiveObject {
     this.hasReminder = false,
     this.isRecurring = false,
     this.reminderOffsetMinutes,
-  }) : id = id ?? const Uuid().v4();
+    this.categoryId,
+    List<String>? subtaskIds,
+  }) : id = id ?? const Uuid().v4(),
+       subtaskIds = subtaskIds ?? [];
 
   factory Task.empty() {
     return Task(
@@ -71,6 +80,7 @@ class Task extends HiveObject {
     bool? hasReminder,
     bool? isRecurring,
     int? reminderOffsetMinutes,
+    String? categoryId,
   }) {
     return Task(
       id: id,
@@ -84,6 +94,7 @@ class Task extends HiveObject {
       hasReminder: hasReminder ?? this.hasReminder,
       isRecurring: isRecurring ?? this.isRecurring,
       reminderOffsetMinutes: reminderOffsetMinutes ?? this.reminderOffsetMinutes,
+      categoryId: categoryId ?? this.categoryId,
     );
   }
 }

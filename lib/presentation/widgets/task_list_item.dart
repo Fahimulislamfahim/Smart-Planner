@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/task_model.dart';
 import '../../features/tasks/task_providers.dart';
+import '../../features/categories/category_providers.dart';
 
 class TaskListItem extends ConsumerWidget {
   final Task task;
@@ -94,6 +95,32 @@ class TaskListItem extends ConsumerWidget {
                   ),
                 ],
               ),
+              if (task.subtaskIds.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.checklist, size: 18),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Subtasks (${task.subtaskIds.length})',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ...task.subtaskIds.map((id) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.subdirectory_arrow_right, size: 16, color: Colors.grey),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text('Subtask $id')),
+                    ],
+                  ),
+                )),
+              ],
               const SizedBox(height: 32),
               Row(
                 children: [
@@ -223,20 +250,57 @@ class TaskListItem extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-              if (task.time != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Row(
-                    children: [
-                      Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
-                      const SizedBox(width: 4),
-                      Text(
-                        task.time!,
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              Row(
+                children: [
+                  if (task.categoryId != null) ...[
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final categories = ref.watch(categoryListProvider);
+                        final category = categories.firstWhere(
+                          (c) => c.id == task.categoryId,
+                          orElse: () => categories.first,
+                        );
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: category.color.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(category.icon, style: const TextStyle(fontSize: 10)),
+                              const SizedBox(width: 2),
+                              Text(
+                                category.name,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: category.color,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  if (task.time != null)
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
+                          const SizedBox(width: 4),
+                          Text(
+                            task.time!,
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                ],
+              ),
             ],
           ),
           trailing: Container(
