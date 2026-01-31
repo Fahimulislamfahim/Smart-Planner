@@ -50,6 +50,7 @@ dev_dependencies:
     sdk: flutter
   build_runner:
   hive_generator:
+  flutter_launcher_icons: ^0.13.1
 
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -104,3 +105,11 @@ flutter:
 
 dependency_overrides:
   path_provider_foundation: 2.3.0
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "app icon/app iconv1.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "app icon/app iconv1.png"
