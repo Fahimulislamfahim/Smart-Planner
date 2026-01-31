@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/insights/insights_provider.dart';
 import '../../features/tasks/task_providers.dart';
+import '../../features/focus/focus_session_provider.dart';
 
 class InsightsScreen extends ConsumerWidget {
   const InsightsScreen({super.key});
@@ -12,6 +13,9 @@ class InsightsScreen extends ConsumerWidget {
     final weeklyStats = ref.watch(weeklyStatsProvider);
     final completionRate = ref.watch(completionRateProvider);
     final allTasks = ref.watch(taskListProvider);
+    final focusNotifier = ref.watch(focusSessionProvider.notifier);
+    final totalFocusMinutes = focusNotifier.getTotalFocusMinutes();
+    final todayFocusMinutes = focusNotifier.getTodayFocusMinutes();
 
     return Scaffold(
       appBar: AppBar(
@@ -23,6 +27,8 @@ class InsightsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSummaryCards(context, allTasks.length, completionRate),
+            const SizedBox(height: 16),
+            _buildFocusTimeCards(context, totalFocusMinutes, todayFocusMinutes),
             const SizedBox(height: 24),
             Text(
               'Weekly Activity',
@@ -140,6 +146,39 @@ class InsightsScreen extends ConsumerWidget {
             value: totalTasks.toString(),
             icon: Icons.list,
             color: Colors.orange,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFocusTimeCards(BuildContext context, int totalMinutes, int todayMinutes) {
+    String formatTime(int minutes) {
+      final hours = minutes ~/ 60;
+      final mins = minutes % 60;
+      if (hours > 0) {
+        return '${hours}h ${mins}m';
+      }
+      return '${mins}m';
+    }
+
+    return Row(
+      children: [
+        Expanded(
+          child: _StatCard(
+            title: 'Total Focus Time',
+            value: formatTime(totalMinutes),
+            icon: Icons.timer,
+            color: Colors.purple,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _StatCard(
+            title: 'Today\'s Focus',
+            value: formatTime(todayMinutes),
+            icon: Icons.today,
+            color: Colors.blue,
           ),
         ),
       ],

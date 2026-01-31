@@ -4,6 +4,8 @@ import '../models/app_settings.dart';
 import '../models/category.dart';
 import '../models/subtask.dart';
 import '../models/app_theme.dart';
+import '../models/focus_session.dart';
+import '../models/note.dart';
 
 class HiveService {
   static const String taskBoxName = 'tasks';
@@ -19,12 +21,16 @@ class HiveService {
     Hive.registerAdapter(CategoryAdapter());
     Hive.registerAdapter(SubtaskAdapter());
     Hive.registerAdapter(AppThemeAdapter());
+    Hive.registerAdapter(FocusSessionAdapter());
+    Hive.registerAdapter(NoteAdapter());
     
     // Open Boxes
     await Hive.openBox<Task>(taskBoxName);
     await Hive.openBox(settingsBoxName);
     await Hive.openBox<Category>(categoryBoxName);
     await Hive.openBox<Subtask>('subtasks');
+    await Hive.openBox<FocusSession>('focus_sessions');
+    await Hive.openBox<Note>('notes');
 
   }
 

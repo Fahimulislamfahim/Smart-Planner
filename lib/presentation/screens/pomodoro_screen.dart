@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
+import '../../features/focus/focus_session_provider.dart';
 
 class PomodoroScreen extends ConsumerStatefulWidget {
   const PomodoroScreen({super.key});
@@ -16,10 +17,12 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
   bool _isRunning = false;
   bool _isWorkSession = true;
   Timer? _timer;
+  int _sessionStartSeconds = 25 * 60;
 
   void _startTimer() {
     setState(() {
       _isRunning = true;
+      _sessionStartSeconds = _remainingSeconds;
     });
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -50,6 +53,13 @@ class _PomodoroScreenState extends ConsumerState<PomodoroScreen> {
 
   void _onSessionComplete() {
     _timer?.cancel();
+    
+    // Save completed work session
+    if (_isWorkSession) {
+      final completedMinutes = _sessionStartSeconds ~/ 60;
+      ref.read(focusSessionProvider.notifier).addSession(completedMinutes, 'work');
+    }
+    
     setState(() {
       _isRunning = false;
       _isWorkSession = !_isWorkSession;

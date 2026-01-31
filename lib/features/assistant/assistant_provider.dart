@@ -13,5 +13,5 @@ final assistantMessageProvider = Provider<String>((ref) {
   final greeting = service.getGreeting();
   final summary = service.getDailySummary(tasks);
   
-  return "$greeting!\n$summary";
+  return "$greeting\n$summary";
 });

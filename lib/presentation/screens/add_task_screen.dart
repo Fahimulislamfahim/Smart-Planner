@@ -3,11 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import '../../data/models/task_model.dart';
+import '../../data/models/subtask.dart';
+import '../../data/repositories/subtask_repository.dart';
 import '../../features/tasks/task_providers.dart';
 import '../../features/categories/category_providers.dart';
 
 class AddTaskScreen extends ConsumerStatefulWidget {
-  const AddTaskScreen({super.key});
+  final DateTime? initialDate;
+  
+  const AddTaskScreen({
+    super.key,
+    this.initialDate,
+  });
 
   @override
   ConsumerState<AddTaskScreen> createState() => _AddTaskScreenState();
@@ -19,8 +26,14 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
   final _descriptionController = TextEditingController();
   final _subtaskController = TextEditingController();
   
-  DateTime _selectedDate = DateTime.now();
+  late DateTime _selectedDate;
   TimeOfDay? _selectedTime;
+  
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = widget.initialDate ?? DateTime.now();
+  }
   bool _hasReminder = false;
   String _priority = 'Medium';
   String? _selectedCategoryId;
@@ -61,10 +74,22 @@ class _AddTaskScreenState extends ConsumerState<AddTaskScreen> {
     }
   }
 
-  void _saveTask() {
+  void _saveTask() async {
     if (_formKey.currentState!.validate()) {
-      // Generate IDs for subtasks
-      final subtaskIds = _subtasks.map((title) => const Uuid().v4()).toList();
+      // Create and save subtask objects
+      final subtaskIds = <String>[];
+      final subtaskRepo = SubtaskRepository();
+      
+      for (final subtaskTitle in _subtasks) {
+        final subtaskId = const Uuid().v4();
+        final subtask = Subtask(
+          id: subtaskId,
+          title: subtaskTitle,
+          isCompleted: false,
+        );
+        await subtaskRepo.addSubtask(subtask);
+        subtaskIds.add(subtaskId);
+      }
       
       final newTask = Task(
         title: _titleController.text,

@@ -1,14 +1,29 @@
 import '../../data/models/task_model.dart';
 
+import 'dart:math';
+import '../constants/assistant_messages.dart';
+
 class AssistantService {
   String getGreeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) {
-      return 'Good Morning';
-    } else if (hour < 17) {
-      return 'Good Afternoon';
+    final random = Random();
+
+    if (hour >= 5 && hour < 8) {
+      return AssistantMessages.earlyMorningMessages[
+          random.nextInt(AssistantMessages.earlyMorningMessages.length)];
+    } else if (hour >= 8 && hour < 12) {
+      return AssistantMessages.lateMorningMessages[
+          random.nextInt(AssistantMessages.lateMorningMessages.length)];
+    } else if (hour >= 12 && hour < 17) {
+      return AssistantMessages.afternoonMessages[
+          random.nextInt(AssistantMessages.afternoonMessages.length)];
+    } else if (hour >= 17 && hour < 21) {
+      return AssistantMessages.eveningMessages[
+          random.nextInt(AssistantMessages.eveningMessages.length)];
     } else {
-      return 'Good Evening';
+      // Late Night (21:00 - 4:59)
+      return AssistantMessages.lateNightMessages[
+          random.nextInt(AssistantMessages.lateNightMessages.length)];
     }
   }
 

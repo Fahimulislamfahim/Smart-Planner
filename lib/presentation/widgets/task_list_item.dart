@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/task_model.dart';
+import '../../data/models/subtask.dart';
 import '../../features/tasks/task_providers.dart';
 import '../../features/categories/category_providers.dart';
+import '../../data/repositories/subtask_repository.dart';
 
 class TaskListItem extends ConsumerWidget {
   final Task task;
@@ -30,7 +32,9 @@ class TaskListItem extends ConsumerWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Padding(
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -110,16 +114,74 @@ class TaskListItem extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                ...task.subtaskIds.map((id) => Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.subdirectory_arrow_right, size: 16, color: Colors.grey),
-                      const SizedBox(width: 8),
-                      Expanded(child: Text('Subtask $id')),
-                    ],
-                  ),
-                )),
+                Consumer(
+                  builder: (context, ref, child) {
+                    final subtaskRepo = SubtaskRepository();
+                    final subtasks = subtaskRepo.getSubtasks(task.subtaskIds);
+                    
+                    return Column(
+                      children: subtasks.map((subtask) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: subtask.isCompleted,
+                              onChanged: (bool? value) async {
+                                if (value != null) {
+                                  final updatedSubtask = Subtask(
+                                    id: subtask.id,
+                                    title: subtask.title,
+                                    isCompleted: value,
+                                  );
+                                  await subtaskRepo.updateSubtask(updatedSubtask);
+                                  // Update modal state immediately
+                                  setModalState(() {});
+                                  // Trigger main list rebuild
+                                  ref.invalidate(taskListProvider);
+                                }
+                              },
+                            ),
+                            Expanded(
+                              child: Text(
+                                subtask.title,
+                                style: TextStyle(
+                                  decoration: subtask.isCompleted ? TextDecoration.lineThrough : null,
+                                  color: subtask.isCompleted ? Colors.grey : null,
+                                ),
+                              ),
+                            ),
+                            if (subtask.isCompleted) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.green, width: 1),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.check, size: 12, color: Colors.green),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'Completed',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      )).toList(),
+                    );
+                  },
+                ),
               ],
               const SizedBox(height: 32),
               Row(
@@ -180,6 +242,8 @@ class TaskListItem extends ConsumerWidget {
               const SizedBox(height: 20),
             ],
           ),
+        );
+          },
         );
       },
     );

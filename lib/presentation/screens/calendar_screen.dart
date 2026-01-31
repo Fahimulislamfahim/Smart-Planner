@@ -4,6 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../data/models/task_model.dart';
 import '../widgets/task_list_item.dart';
 import '../../features/tasks/task_providers.dart' hide isSameDay;
+import 'add_task_screen.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
@@ -117,6 +118,19 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddTaskScreen(
+                initialDate: _selectedDay,
+              ),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

@@ -21,70 +21,72 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           title: Text(category == null ? 'Add Category' : 'Edit Category'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Category Name',
-                  hintText: 'e.g., Work, Personal',
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Category Name',
+                    hintText: 'e.g., Work, Personal',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: iconController,
-                decoration: const InputDecoration(
-                  labelText: 'Icon (Emoji)',
-                  hintText: '📁',
+                const SizedBox(height: 16),
+                TextField(
+                  controller: iconController,
+                  decoration: const InputDecoration(
+                    labelText: 'Icon (Emoji)',
+                    hintText: '📁',
+                    helperText: 'Enter an emoji',
+                  ),
                 ),
-                maxLength: 2,
-              ),
-              const SizedBox(height: 16),
-              const Text('Color', style: TextStyle(fontSize: 12)),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  Colors.blue,
-                  Colors.red,
-                  Colors.green,
-                  Colors.orange,
-                  Colors.purple,
-                  Colors.teal,
-                  Colors.pink,
-                  Colors.amber,
-                  Colors.indigo,
-                  Colors.cyan,
-                ].map((color) {
-                  return GestureDetector(
-                    onTap: () {
-                      setDialogState(() {
-                        selectedColor = color;
-                      });
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: selectedColor == color
-                              ? Colors.black
-                              : Colors.transparent,
-                          width: 3,
+                const SizedBox(height: 16),
+                const Text('Color', style: TextStyle(fontSize: 12)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    Colors.blue,
+                    Colors.red,
+                    Colors.green,
+                    Colors.orange,
+                    Colors.purple,
+                    Colors.teal,
+                    Colors.pink,
+                    Colors.amber,
+                    Colors.indigo,
+                    Colors.cyan,
+                  ].map((color) {
+                    return GestureDetector(
+                      onTap: () {
+                        setDialogState(() {
+                          selectedColor = color;
+                        });
+                      },
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: selectedColor == color
+                                ? Colors.black
+                                : Colors.transparent,
+                            width: 3,
+                          ),
                         ),
+                        child: selectedColor == color
+                            ? const Icon(Icons.check, color: Colors.white)
+                            : null,
                       ),
-                      child: selectedColor == color
-                          ? const Icon(Icons.check, color: Colors.white)
-                          : null,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
