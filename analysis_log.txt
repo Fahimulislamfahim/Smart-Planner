@@ -1,0 +1,25 @@
+Analyzing Smart Planner...                                      
+
+   info - Don't invoke 'print' in production code - lib\core\services\notification_service.dart:4:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\core\services\notification_service.dart:14:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\core\services\notification_service.dart:19:5 - avoid_print
+   info - Angle brackets will be interpreted as HTML - lib\core\services\productivity_service.dart:11:24 - unintended_html_in_doc_comment
+warning - The value of the field '_lightTextSecondary' isn't used - lib\core\themes\app_theme.dart:16:16 - unused_field
+warning - The value of the field '_darkTextSecondary' isn't used - lib\core\themes\app_theme.dart:22:16 - unused_field
+   info - 'background' is deprecated and shouldn't be used. Use surface instead. This feature was deprecated after v3.18.0-0.1.pre - lib\core\themes\app_theme.dart:36:9 - deprecated_member_use
+   info - 'onBackground' is deprecated and shouldn't be used. Use onSurface instead. This feature was deprecated after v3.18.0-0.1.pre - lib\core\themes\app_theme.dart:41:9 - deprecated_member_use
+   info - 'background' is deprecated and shouldn't be used. Use surface instead. This feature was deprecated after v3.18.0-0.1.pre - lib\core\themes\app_theme.dart:102:9 - deprecated_member_use
+   info - 'onBackground' is deprecated and shouldn't be used. Use onSurface instead. This feature was deprecated after v3.18.0-0.1.pre - lib\core\themes\app_theme.dart:107:9 - deprecated_member_use
+warning - Unused import: 'package:flutter/material.dart' - lib\data\models\task_model.dart:1:8 - unused_import
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\presentation\screens\add_task_screen.dart:156:17 - deprecated_member_use
+  error - The named parameter 'getTooltipColor' isn't defined - lib\presentation\screens\insights_screen.dart:46:23 - undefined_named_parameter
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\presentation\screens\insights_screen.dart:173:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\presentation\widgets\assistant_header.dart:18:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\presentation\widgets\assistant_header.dart:22:33 - deprecated_member_use
+warning - Unused import: 'package:flutter/material.dart' - test\widget_test.dart:1:8 - unused_import
+warning - Unused import: 'package:flutter_riverpod/flutter_riverpod.dart' - test\widget_test.dart:2:8 - unused_import
+warning - Unused import: 'package:smart_planner/data/local/hive_service.dart' - test\widget_test.dart:5:8 - unused_import
+warning - Unused import: 'package:smart_planner/main.dart' - test\widget_test.dart:6:8 - unused_import
+warning - Unused import: 'package:smart_planner/data/models/task_model.dart' - test\widget_test.dart:7:8 - unused_import
+
+21 issues found. (ran in 3.7s)
