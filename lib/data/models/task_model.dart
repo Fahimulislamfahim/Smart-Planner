@@ -36,6 +36,9 @@ class Task extends HiveObject {
   @HiveField(9)
   bool isRecurring;
 
+  @HiveField(10)
+  int? reminderOffsetMinutes; // Minutes before task time, null = use default
+
   Task({
     String? id,
     required this.title,
@@ -47,6 +50,7 @@ class Task extends HiveObject {
     this.isCompleted = false,
     this.hasReminder = false,
     this.isRecurring = false,
+    this.reminderOffsetMinutes,
   }) : id = id ?? const Uuid().v4();
 
   factory Task.empty() {
@@ -66,6 +70,7 @@ class Task extends HiveObject {
     bool? isCompleted,
     bool? hasReminder,
     bool? isRecurring,
+    int? reminderOffsetMinutes,
   }) {
     return Task(
       id: id,
@@ -78,6 +83,7 @@ class Task extends HiveObject {
       isCompleted: isCompleted ?? this.isCompleted,
       hasReminder: hasReminder ?? this.hasReminder,
       isRecurring: isRecurring ?? this.isRecurring,
+      reminderOffsetMinutes: reminderOffsetMinutes ?? this.reminderOffsetMinutes,
     );
   }
 }

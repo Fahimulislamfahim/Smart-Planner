@@ -6,6 +6,7 @@ import '../widgets/task_list_item.dart';
 import '../widgets/assistant_header.dart';
 import 'add_task_screen.dart';
 import 'insights_screen.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -86,7 +87,10 @@ class _TaskTabs extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () {
-                // Settings Screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                );
               },
             ),
           ],

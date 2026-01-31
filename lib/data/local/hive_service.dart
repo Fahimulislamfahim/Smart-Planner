@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/task_model.dart';
+import '../models/app_settings.dart';
 
 class HiveService {
   static const String taskBoxName = 'tasks';
@@ -10,6 +11,7 @@ class HiveService {
     
     // Register Adapters
     Hive.registerAdapter(TaskAdapter()); 
+    Hive.registerAdapter(AppSettingsAdapter());
     
     // Open Boxes
     await Hive.openBox<Task>(taskBoxName);
